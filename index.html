@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+ 
+<head>
+	<meta charset="utf-8">
+  	<title>React! React! React!</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+  	<script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+	<script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+	<script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
+</head>
+ 
+<body>
+  		<div id="container"></div>
+
+  		<script type="text/babel"> 
+
+  		class BottomArea extends React.Component {
+  			render(){
+  				var areaStyle = {
+  					backgroundColor: "#FFF",
+  					margin: 0,
+  					padding: "1%",
+  					display:"flex",
+  					alignItems: "center",
+  					justifyContent: "center",
+  					width: "16.6%"
+  				};
+
+  				return(<div style={areaStyle}>{this.props.children}</div>);
+  			}
+  		}
+
+
+  		class BottomItem extends React.Component{
+  			render(){
+
+  				function clicked(e){
+  					e.preventtDefault();
+  				}
+
+  				var wrapStyle = {
+  					backgroundColor: "Transparent",
+  					height: "50%",
+  					margin: "2%"
+    			};
+    			var imgStyle = {
+    				height: "100%",
+    				width: "100%",
+    				objectFit: "contain"
+    			}
+
+    			var textStyle = {
+    				fontFamily: "Roboto",
+    				textAlign: "center",
+    				fontSize: "2.5vmin"
+    			}
+
+  				return(
+  					<div class="bottomButton" onClick={clicked}>
+  						<div style={wrapStyle}>
+  							<img src={this.props.imgPath} style={imgStyle}/>
+  						</div>
+  						<p style={textStyle}>{this.props.text}</p>
+  					</div>
+  				);
+  			}
+  		}
+
+
+class BottomNav extends React.Component {
+  render() {
+
+    var bottomStyle = {
+      position: "fixed",
+      overflow: "hidden",
+      bottom: 0,
+      left: 0,
+      width: "100%",
+      height: "20%",
+      padding: 0,
+      backgroundColor: "#FFF",
+      display: "flex",
+      WebkitFilter: "drop-shadow(0px 0px 5px #666)",
+      filter: "drop-shadow(0px 0px 5px #666)"
+    };
+ 
+    return (
+      <div style={bottomStyle}>
+      	<BottomArea><BottomItem imgPath="info.png" text="Home"/></BottomArea>
+      	<BottomArea><BottomItem imgPath="games.png" text="Games"/></BottomArea>
+      	<BottomArea><BottomItem imgPath="auth.png" text="Authorization"/></BottomArea>
+      	<BottomArea><BottomItem imgPath="console.png" text="Console"/></BottomArea>
+      	<BottomArea><BottomItem imgPath="settings.png" text="Settings"/></BottomArea>
+      	<BottomArea><BottomItem imgPath="modules.png" text="Modules"/></BottomArea>
+      </div>
+    );
+  }
+}
+
+class ConsoleLog extends React.Component {
+
+	render(){
+		var userStyle = {
+			color: "#00FF00",
+			fontFamily: "monospace",
+			fontSize: "130%",
+			fontWeight: "bold"
+		}
+
+		var serverStyle = {
+			color: "#FF0000",
+			fontFamily: "monospace",
+			fontSize: "130%",
+			fontWeight: "bold"
+		}
+
+		function decorate(fromConsole, command){
+			if(fromConsole){
+				return(<div style={serverStyle}>[SERVER]: {command}</div>);
+			}
+
+			return(<div style={userStyle}>[USER]: {command}</div>);
+		}
+
+		return(decorate(this.props.logObject.fromConsole, this.props.logObject.command));
+	}
+}
+
+class ConsoleComponent extends React.Component {
+	constructor(props, context) {
+    	super(props, context);
+ 
+    	this.state = {
+      		commands: [
+      			{
+        			command: "/start",
+        			fromConsole: true
+    			}
+    		] 
+    	};
+    	this.handleSubmit = this.handleSubmit.bind(this);
+    }
+	
+	handleSubmit(e){
+		var arrayvar = this.state.commands.slice()
+		var element1 = {
+			command: e.target.consoleInput.value,
+			fromConsole: false
+		}
+		var element2 = {
+			command: "Answer from ServerFacade",
+			fromConsole: true
+		}
+		arrayvar.push(element1)
+		arrayvar.push(element2)
+		this.setState({ commands: arrayvar })
+		e.target.consoleInput.value="";
+		var out = this.refs.logOut;
+		out.scrollTop = out.scrollHeight;
+		e.preventDefault();
+	}
+
+
+	render() {
+		
+		var consoleStyle = {
+			display:"block",
+			border: "3px solid black",
+			height: "70vh"
+		}
+
+		var wrapStyle = {
+			height: "10%",
+			width: "100%",
+			backgroundColor: "#000",
+			padding: 0
+		}
+
+		var inputStyle = {
+			fontSize: "140%",
+			padding: 0,
+			margin: 0,
+			width: "100%",
+			height: "100%",
+			backgroundColor: "#000",
+			color: "#FFF",
+			border: "0px",
+			fontFamily: "monospace",
+			border: "1px solid white",
+			borderRadius:"5%"
+		}
+
+		var logStyle = {
+			overflowY: "auto",
+			backgroundColor: "#000",
+			height: "90%"
+		}
+
+		var logElement = <div style={logStyle} ref="logOut">{this.state.commands.map((object, i) => <ConsoleLog logObject={object} key={i} />)}</div>;
+		
+		return(
+			<div style={consoleStyle}>
+			{logElement}	
+			<form style={wrapStyle} onSubmit={this.handleSubmit}>
+					<input style={inputStyle} type="text" name="consoleInput" ref="consoleInputRef"/>
+				</form>
+			</div>
+		);
+	}
+}
+
+class Indicator extends React.Component {
+	render(){
+		var style = {
+			backgroundColor: "#0000FF",
+			borderRadius: "25px",
+			height:"100%",
+			width:"100%",
+		}
+
+		return(
+				<div style={style}></div>
+			);
+	}
+}
+
+class AppBar extends React.Component {
+	render(){
+		var topAreaStyle = {
+			borderRadius: "5px",
+      		padding: 0,
+      		backgroundColor: "#5BBA6F",
+      		display: "block",
+      		height: "4.8vh",
+      		WebkitFilter: "drop-shadow(0px 0px 5px #666)",
+      		filter: "drop-shadow(0px 0px 5px #666)",
+      		paddingLeft: "10px",
+      		paddingRight: "15px",
+      		paddingTop: "10px",
+      		paddingBottom: "10px"
+    	}
+
+    	var textStyle = {
+    		fontFamily: "Roboto",
+    		display: "flex",
+      		color: "#FFF",
+      		display: "inline-block",
+      		fontSize: "130%",
+      		fontWeight: "bold"
+    	}
+
+    	var indicatorStyle = {
+    		float: "right",
+      		display: "inline-block",
+      		width: "5vmin",
+      		height: "5vmin"
+    	}
+
+
+		return(
+			<div style={topAreaStyle}>
+				<div style={textStyle}>Terasology</div>
+				<div style={indicatorStyle}><Indicator/></div>
+			</div>
+		);
+	}
+}
+ 
+ReactDOM.render(
+  <div>
+    <BottomNav color="#FF6663"/>
+    <AppBar/>
+    <ConsoleComponent/>
+  </div>,
+  document.querySelector("#container")
+);
+
+	</script>
+</body>
+</html>

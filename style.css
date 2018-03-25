@@ -1,0 +1,23 @@
+html, body {
+	background-color: #EEE;
+	height: 100%;
+	padding:0px;
+}
+
+#container {
+	margin: 0px;
+    padding:5px;
+    height: 100%;
+    background-color: #FFF;
+}
+
+.bottomButton {
+	border-radius: 5%;
+    background-color: #5BBA6F;
+    height: 100%;
+   	width: 100%;
+}
+
+.bottomButton:active {
+	background-color: #137547;
+} 
